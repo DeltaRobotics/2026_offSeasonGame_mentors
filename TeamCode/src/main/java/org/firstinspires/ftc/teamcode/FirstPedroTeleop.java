@@ -35,12 +35,18 @@ public class FirstPedroTeleop extends LinearOpMode {
 
         waitForStart();
 
+
         while (opModeIsActive() && !isStopRequested())
         {
             follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
             follower.update();
 
             buttonArray[0] = hardwaremap.servoFineAdjust(hardwaremap.bottomWrist, gamepad1.a, gamepad1.b, buttonArray[0]);
+            buttonArray[1] = hardwaremap.servoFineAdjust(hardwaremap.bottomClaw, gamepad1.x, gamepad1.y, buttonArray[1]);
+
+            telemetry.addData("Wrist pos", hardwaremap.bottomWrist.getPosition());
+            telemetry.addData("Claw pos", hardwaremap.bottomClaw.getPosition());
+            telemetry.update();
 
         }
     }

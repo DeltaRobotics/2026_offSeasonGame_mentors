@@ -71,25 +71,25 @@ public class FirstHardwaremap {
     }
 
     public boolean servoFineAdjust(Servo servo, boolean up, boolean down, boolean checker){
-        telemetry.addData("First", 1);
-        if (up && checker){
-            servo.setPosition(servo.getPosition() + 0.05);
-            telemetry.addData("secod", 1);
-            checker = false;
+
+        if (up){
+            if (checker){
+                servo.setPosition(servo.getPosition() + 0.05);
+                checker = false;
+            }
+            return checker;
         }
-        else if(!up && !checker){
-            checker = true;
-        }
-        if (down && checker){
-            servo.setPosition(servo.getPosition() - 0.05);
-            telemetry.addData("thrd", 1);
-            checker = false;
-        }
-        else if(!down && !checker){
-            checker = true;
+        if (down){
+            if (checker){
+                servo.setPosition(servo.getPosition() - 0.05);
+                checker = false;
+            }
+            return checker;
         }
 
-        telemetry.update();
+        if (!up && !down && !checker){
+            return true;
+        }
 
         return checker;
     }
