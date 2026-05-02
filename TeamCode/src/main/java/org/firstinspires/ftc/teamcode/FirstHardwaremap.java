@@ -20,6 +20,7 @@ public class FirstHardwaremap {
     public DcMotor motorLF = null;
     public DcMotor motorRB = null;
     public DcMotor motorLB = null;
+    public DcMotor extend = null;
 
     public IMU imu         = null;
 
@@ -31,6 +32,7 @@ public class FirstHardwaremap {
     public FirstHardwaremap(HardwareMap ahwMap, Telemetry telemetry) {
 
         this.telemetry = telemetry;
+        /*
         //drive motors
         motorRF = ahwMap.dcMotor.get("motorRF");
         motorLF = ahwMap.dcMotor.get("motorLF");
@@ -51,11 +53,20 @@ public class FirstHardwaremap {
         motorRF.setDirection(DcMotorSimple.Direction.REVERSE);
         motorRB.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
         motorRF.setPower(0);
         motorLF.setPower(0);
         motorRB.setPower(0);
         motorLB.setPower(0);
+
+         */
+
+        extend = ahwMap.dcMotor.get("extend");
+
+        extend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        extend.setTargetPosition(0);
+        extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
 
         bottomClaw = ahwMap.servo.get("bottomClaw");
