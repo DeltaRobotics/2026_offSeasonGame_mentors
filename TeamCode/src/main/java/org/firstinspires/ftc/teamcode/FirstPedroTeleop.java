@@ -18,6 +18,10 @@ public class FirstPedroTeleop extends LinearOpMode {
 
     boolean[] buttonArray = new boolean[20];
     int extendPos = 0;
+    int liftPos = 0;
+    int liftStage = 0;
+    int armStage = 0;
+    int armPos = 0;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -33,14 +37,24 @@ public class FirstPedroTeleop extends LinearOpMode {
 
         hardwaremap.bottomWrist.setPosition(0.5);
         hardwaremap.bottomClaw.setPosition(0.5);
+        hardwaremap.liftClaw.setPosition(0.65);
+        hardwaremap.liftWrist.setPosition(0.5);
 
         waitForStart();
 
 
         while (opModeIsActive() && !isStopRequested())
         {
-            follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+            follower.setTeleOpDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, true);
             follower.update();
+
+
+            //claw open pos: 1      close: 0.55
+            buttonArray[0] = hardwaremap.servoFineAdjust(hardwaremap.liftClaw, gamepad1.dpad_up, gamepad1.dpad_down, buttonArray[0]);
+            //wrist WIP
+            buttonArray[1] = hardwaremap.servoFineAdjust(hardwaremap.liftWrist, gamepad1.dpad_left, gamepad1.dpad_right, buttonArray[1]);
+
+
 
 
             //bottom: 0.05         top: 0.75
@@ -65,19 +79,78 @@ public class FirstPedroTeleop extends LinearOpMode {
 
 
             if (gamepad1.right_bumper){
-                extendPos++;
+                extendPos += 5;
             }
             else if (gamepad1.left_bumper){
-                extendPos--;
+                extendPos -= 5;
             }
             hardwaremap.extend.setPower(1);
             hardwaremap.extend.setTargetPosition(extendPos);
 
 
+            if (gamepad1.left_trigger < 0.5 && buttonArray[10]){
+                liftStage++;
+                if (liftStage > 2){
+                    liftStage = 0;
+                }
+                buttonArray[10] = false;
+            } else if (gamepad1.left_trigger > 0.5 && !buttonArray[10]){
+                buttonArray[10] = true;
+            }
+            switch (liftStage){
+                case 0:
+                    liftPos = 150;
+                    break;
+                case 1:
+                    liftPos = 2500;
+                    break;
+                case 2:
+                    liftPos = 5350;
+                    break;
+            }
+            //max lift height: 5350
+            hardwaremap.liftL.setPower(1);
+            hardwaremap.liftR.setPower(1);
+            hardwaremap.liftL.setTargetPosition(liftPos);
+            hardwaremap.liftR.setTargetPosition(liftPos);
+
+
+
+
+            if (gamepad1.right_trigger < 0.5 && buttonArray[11]){
+                armStage++;
+                if (armStage > 1){
+                    armStage = 0;
+                }
+                buttonArray[11] = false;
+            } else if (gamepad1.right_trigger > 0.5 && !buttonArray[11]){
+                buttonArray[11] = true;
+            }
+            switch (armStage){
+                case 0:
+                    armPos = 25;
+                    break;
+                case 1:
+                    armPos = 550;
+                    break;
+            }
+            hardwaremap.arm.setPower(1);
+            hardwaremap.arm.setTargetPosition(armPos);
+
+
+
+            telemetry.addData("Lift theory pos", liftPos);
+            telemetry.addData("Lift pos", hardwaremap.liftL.getCurrentPosition());
+
+            telemetry.addData("Arm theory pos", armPos);
+            telemetry.addData("Arm pos", hardwaremap.arm.getCurrentPosition());
+
             telemetry.addData("Extend theory pos", extendPos);
             telemetry.addData("Extend pos", hardwaremap.extend.getCurrentPosition());
-            telemetry.addData("Wrist pos", hardwaremap.bottomWrist.getPosition());
-            telemetry.addData("Claw pos", hardwaremap.bottomClaw.getPosition());
+            telemetry.addData("Extend wrist pos", hardwaremap.bottomWrist.getPosition());
+            telemetry.addData("Extend claw pos", hardwaremap.bottomClaw.getPosition());
+            telemetry.addData("Lift wrist pos", hardwaremap.liftWrist.getPosition());
+            telemetry.addData("Lift claw pos", hardwaremap.liftClaw.getPosition());
             telemetry.update();
 
         }
