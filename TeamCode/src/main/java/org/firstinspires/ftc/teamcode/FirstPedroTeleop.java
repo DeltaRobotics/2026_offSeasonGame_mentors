@@ -99,7 +99,7 @@ public class FirstPedroTeleop extends LinearOpMode {
             }
             switch (liftStage){
                 case 0:
-                    liftPos = 150;
+                    liftPos = 25;
                     break;
                 case 1:
                     liftPos = 2500;
@@ -132,8 +132,8 @@ public class FirstPedroTeleop extends LinearOpMode {
                     armPos = 550;
                     break;
             }
-            hardwaremap.arm.setPower(1);
-            hardwaremap.arm.setTargetPosition(armPos);
+            //hardwaremap.arm.setPower(1);
+            //hardwaremap.arm.setTargetPosition(armPos);
 
             /*
             telemetry.addData("X pos: ", follower.poseTracker.getPose().getX());
