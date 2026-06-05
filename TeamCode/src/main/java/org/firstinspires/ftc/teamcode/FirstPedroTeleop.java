@@ -37,8 +37,8 @@ public class FirstPedroTeleop extends LinearOpMode {
 
         hardwaremap.bottomWrist.setPosition(0.5);
         hardwaremap.bottomClaw.setPosition(0.5);
-        hardwaremap.liftClaw.setPosition(0.65);
-        hardwaremap.liftWrist.setPosition(0.5);
+        hardwaremap.liftClaw.setPosition(0.7);
+        hardwaremap.liftWrist.setPosition(0.65);
 
         waitForStart();
 
@@ -57,7 +57,7 @@ public class FirstPedroTeleop extends LinearOpMode {
 
 
 
-            //bottom: 0.05         top: 0.75
+            //bottom: 0.05         top: 0.70
             buttonArray[2] = hardwaremap.servoFineAdjust(hardwaremap.bottomWrist, gamepad1.a, gamepad1.b, buttonArray[2]);
 
             //open pos: 0.9     close pos: 0.55
@@ -102,10 +102,10 @@ public class FirstPedroTeleop extends LinearOpMode {
                     liftPos = 25;
                     break;
                 case 1:
-                    liftPos = 2500;
+                    liftPos = 2000;
                     break;
                 case 2:
-                    liftPos = 5350;
+                    liftPos = 3000;
                     break;
             }
             //max lift height: 5350
