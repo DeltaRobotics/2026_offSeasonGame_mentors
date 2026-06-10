@@ -129,11 +129,11 @@ public class FirstPedroTeleop extends LinearOpMode {
                     armPos = 25;
                     break;
                 case 1:
-                    armPos = 550;
+                    armPos = 150;
                     break;
             }
-            //hardwaremap.arm.setPower(1);
-            //hardwaremap.arm.setTargetPosition(armPos);
+            hardwaremap.arm.setPower(1);
+            hardwaremap.arm.setTargetPosition(armPos);
 
             /*
             telemetry.addData("X pos: ", follower.poseTracker.getPose().getX());

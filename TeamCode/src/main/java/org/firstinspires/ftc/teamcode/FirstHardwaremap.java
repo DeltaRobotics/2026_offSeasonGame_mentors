@@ -74,7 +74,7 @@ public class FirstHardwaremap {
         arm = ahwMap.dcMotor.get("arm");
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setTargetPosition(0);
+        arm.setTargetPosition(25);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         liftL = ahwMap.dcMotor.get("liftLeft");
