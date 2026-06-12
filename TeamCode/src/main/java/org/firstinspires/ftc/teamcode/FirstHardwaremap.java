@@ -31,6 +31,7 @@ public class FirstHardwaremap {
     public Servo bottomClaw = null;
     public Servo liftWrist = null;
     public Servo liftClaw = null;
+    public Servo extensionRelease = null;
     public Telemetry telemetry;
 
 
@@ -94,6 +95,7 @@ public class FirstHardwaremap {
         bottomWrist = ahwMap.servo.get("bottomWrist");
         liftClaw = ahwMap.servo.get("liftClaw");
         liftWrist = ahwMap.servo.get("liftWrist");
+        extensionRelease = ahwMap.servo.get("extensionRelease");
 
     }
 

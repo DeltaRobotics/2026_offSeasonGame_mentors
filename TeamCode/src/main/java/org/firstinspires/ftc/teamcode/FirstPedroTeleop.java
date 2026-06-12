@@ -22,6 +22,7 @@ public class FirstPedroTeleop extends LinearOpMode {
     int liftStage = 0;
     int armStage = 0;
     int armPos = 0;
+    double extensionReleasePos = 0.5;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -134,6 +135,12 @@ public class FirstPedroTeleop extends LinearOpMode {
             }
             hardwaremap.arm.setPower(1);
             hardwaremap.arm.setTargetPosition(armPos);
+
+            //extension release adjustment
+            if (gamepad2.b){
+                extensionReleasePos -= 0.1;
+                hardwaremap.extensionRelease.setPosition(extensionReleasePos);
+            }
 
             /*
             telemetry.addData("X pos: ", follower.poseTracker.getPose().getX());
