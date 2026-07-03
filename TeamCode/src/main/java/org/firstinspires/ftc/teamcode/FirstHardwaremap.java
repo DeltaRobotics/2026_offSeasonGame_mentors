@@ -69,13 +69,12 @@ public class FirstHardwaremap {
         extend = ahwMap.dcMotor.get("extend");
         extend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extend.setTargetPosition(0);
         extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extend.setDirection(DcMotorSimple.Direction.REVERSE);
 
         arm = ahwMap.dcMotor.get("arm");
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setTargetPosition(25);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         liftL = ahwMap.dcMotor.get("liftLeft");

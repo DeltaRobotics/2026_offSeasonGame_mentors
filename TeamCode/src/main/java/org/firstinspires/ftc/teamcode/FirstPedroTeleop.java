@@ -24,6 +24,13 @@ public class FirstPedroTeleop extends LinearOpMode {
     int armPos = 0;
     double extensionReleasePos = 0.5;
 
+    boolean ButtonA = true;
+    boolean ButtonB = true;
+    boolean ButtonX = true;
+    boolean ButtonY = true;
+    boolean ButtonRB = true;
+    boolean ButtonLB = true;
+
     @Override
     public void runOpMode() throws InterruptedException
     {
@@ -36,10 +43,16 @@ public class FirstPedroTeleop extends LinearOpMode {
 
         FirstHardwaremap hardwaremap = new FirstHardwaremap(hardwareMap, telemetry);
 
-        hardwaremap.bottomWrist.setPosition(0.5);
+        hardwaremap.bottomWrist.setPosition(0.4);
         hardwaremap.bottomClaw.setPosition(0.5);
         hardwaremap.liftClaw.setPosition(0.7);
-        hardwaremap.liftWrist.setPosition(0.65);
+        hardwaremap.liftWrist.setPosition(0.8);
+
+        hardwaremap.arm.setTargetPosition(50);
+        hardwaremap.arm.setPower(1);
+
+        hardwaremap.extend.setTargetPosition(0);
+        hardwaremap.extend.setPower(1);
 
         waitForStart();
 
@@ -50,41 +63,61 @@ public class FirstPedroTeleop extends LinearOpMode {
             follower.update();
 
 
-            //claw open pos: 1      close: 0.55
-            buttonArray[0] = hardwaremap.servoFineAdjust(hardwaremap.liftWrist, gamepad1.dpad_up, gamepad1.dpad_down, buttonArray[0]);
-            //wrist WIP
-            buttonArray[1] = hardwaremap.servoFineAdjust(hardwaremap.liftClaw, gamepad1.dpad_left, gamepad1.dpad_right, buttonArray[1]);
+            //wrist WIP intake: 0.8   output: 1
+            //buttonArray[0] = hardwaremap.servoFineAdjust(hardwaremap.liftWrist, gamepad1.dpad_up, gamepad1.dpad_down, buttonArray[0]);
+            //claw open pos: 0.6      close: 0.8
+            //buttonArray[1] = hardwaremap.servoFineAdjust(hardwaremap.liftClaw, gamepad1.dpad_left, gamepad1.dpad_right, buttonArray[1]);
 
 
 
 
-            //bottom: 0.05         top: 0.70
-            buttonArray[2] = hardwaremap.servoFineAdjust(hardwaremap.bottomWrist, gamepad1.a, gamepad1.b, buttonArray[2]);
+            //bottom: 0.4         top: 0.9
+            //buttonArray[2] = hardwaremap.servoFineAdjust(hardwaremap.bottomWrist, gamepad1.a, gamepad1.b, buttonArray[2]);
 
-            //open pos: 0.9     close pos: 0.55
-            buttonArray[3] = hardwaremap.servoFineAdjust(hardwaremap.bottomClaw, gamepad1.x, gamepad1.y, buttonArray[3]);
+            //open pos: 0.3     close pos: 0.6
+            //buttonArray[3] = hardwaremap.servoFineAdjust(hardwaremap.bottomClaw, gamepad1.x, gamepad1.y, buttonArray[3]);
 
-            //if (gamepad1.a){
-            //    hardwaremap.bottomWrist.setPosition(0.05);//down
-            //}
-            //else if (gamepad1.b){
-            //    hardwaremap.bottomWrist.setPosition(0.75);//up
-            //}
-
-            //if (gamepad1.x){
-            //    hardwaremap.bottomClaw.setPosition(0.9);//open
-            //}
-            //else if (gamepad1.y){
-            //    hardwaremap.bottomClaw.setPosition(0.55);//open
-            //}
-
-
-            if (gamepad1.right_bumper){
-                extendPos += 5;
+            if (gamepad1.a && ButtonA){
+                hardwaremap.bottomWrist.setPosition(0.4);
+                ButtonA = false;
+            } else if(!gamepad1.a && !ButtonA){
+                hardwaremap.bottomWrist.setPosition(0.9);
+                ButtonA = true;
             }
-            else if (gamepad1.left_bumper){
-                extendPos -= 5;
+
+            if (gamepad1.b && ButtonB){
+                hardwaremap.bottomClaw.setPosition(0.3);
+                ButtonB = false;
+            } else if(!gamepad1.b && !ButtonB){
+                hardwaremap.bottomClaw.setPosition(0.6);
+                ButtonB = true;
             }
+
+            if (gamepad1.x && ButtonX){
+                hardwaremap.liftWrist.setPosition(0.8);
+                ButtonX = false;
+            } else if(!gamepad1.x && !ButtonX){
+                hardwaremap.liftWrist.setPosition(1);
+                ButtonX = true;
+            }
+
+            if (gamepad1.y && ButtonY){
+                hardwaremap.liftClaw.setPosition(0.6);
+                ButtonY = false;
+            } else if(!gamepad1.y && !ButtonY){
+                hardwaremap.liftClaw.setPosition(0.8);
+                ButtonY = true;
+            }
+
+
+            //full extension 2300
+//            if (gamepad1.right_bumper){
+//                extendPos += 5;
+//            }
+//            else if (gamepad1.left_bumper){
+//                extendPos -= 5;
+//            }
+            extendPos = (int) gamepad1.right_trigger * 2300;
             hardwaremap.extend.setPower(1);
             hardwaremap.extend.setTargetPosition(extendPos);
 
@@ -116,13 +149,13 @@ public class FirstPedroTeleop extends LinearOpMode {
             hardwaremap.liftR.setTargetPosition(liftPos);
 
 
-            if (gamepad1.right_trigger < 0.5 && buttonArray[11]){
+            if (gamepad1.right_bumper && buttonArray[11]){
                 armStage++;
-                if (armStage > 1){
+                if (armStage > 3){
                     armStage = 0;
                 }
                 buttonArray[11] = false;
-            } else if (gamepad1.right_trigger > 0.5 && !buttonArray[11]){
+            } else if (!gamepad1.right_bumper && !buttonArray[11]){
                 buttonArray[11] = true;
             }
             switch (armStage){
@@ -131,6 +164,12 @@ public class FirstPedroTeleop extends LinearOpMode {
                     break;
                 case 1:
                     armPos = 150;
+                    break;
+                case 2:
+                    armPos = 600;
+                    break;
+                case 3:
+                    armPos = 100;
                     break;
             }
             hardwaremap.arm.setPower(1);
