@@ -1,18 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@TeleOp(name="FirstPedroTeleop")
+@TeleOp(name="ChildSafeTeleop")
 //@Disabled
-public class FirstPedroTeleop extends LinearOpMode {
+public class ChildSafeTeleop extends LinearOpMode {
 
     public static Follower follower;
 
@@ -22,7 +21,7 @@ public class FirstPedroTeleop extends LinearOpMode {
     int liftStage = 0;
     int armStage = 0;
     int armPos = 0;
-    double extensionReleasePos = 0.5;
+    double extensionPos;
 
     boolean ButtonA = true;
     boolean ButtonB = true;
@@ -46,11 +45,33 @@ public class FirstPedroTeleop extends LinearOpMode {
         hardwaremap.bottomWrist.setPosition(0.4);
         hardwaremap.bottomClaw.setPosition(0.5);
         hardwaremap.liftClaw.setPosition(0.7);
-        hardwaremap.liftWrist.setPosition(0.8);
+        hardwaremap.liftWrist.setPosition(0.7);
 
+        hardwaremap.arm.setDirection(DcMotorSimple.Direction.REVERSE);
         hardwaremap.arm.setTargetPosition(50);
         hardwaremap.arm.setPower(1);
 
+        boolean resetExtension = true;
+        hardwaremap.extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extensionPos = 0.0;//starting pos
+        hardwaremap.extend.setPower(-0.25);
+        sleep(100);
+
+        //pull back lightly until we stop seeing encoder changes then stop
+        while(resetExtension){
+            sleep(100);
+            if(extensionPos < hardwaremap.extend.getCurrentPosition() + 25 && extensionPos > hardwaremap.extend.getCurrentPosition() - 25) { // didn't move much
+                hardwaremap.extend.setPower(0.25);
+                sleep(750);
+                hardwaremap.extend.setPower(0);
+                hardwaremap.extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                resetExtension = false;
+            } else {
+                extensionPos = hardwaremap.extend.getCurrentPosition();
+            }
+        }
+
+        hardwaremap.extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardwaremap.extend.setTargetPosition(0);
         hardwaremap.extend.setPower(1);
 
@@ -62,20 +83,6 @@ public class FirstPedroTeleop extends LinearOpMode {
             follower.setTeleOpDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, true);
             follower.update();
 
-
-            //wrist WIP intake: 0.8   output: 1
-            //buttonArray[0] = hardwaremap.servoFineAdjust(hardwaremap.liftWrist, gamepad1.dpad_up, gamepad1.dpad_down, buttonArray[0]);
-            //claw open pos: 0.6      close: 0.8
-            //buttonArray[1] = hardwaremap.servoFineAdjust(hardwaremap.liftClaw, gamepad1.dpad_left, gamepad1.dpad_right, buttonArray[1]);
-
-
-
-
-            //bottom: 0.4         top: 0.9
-            //buttonArray[2] = hardwaremap.servoFineAdjust(hardwaremap.bottomWrist, gamepad1.a, gamepad1.b, buttonArray[2]);
-
-            //open pos: 0.3     close pos: 0.6
-            //buttonArray[3] = hardwaremap.servoFineAdjust(hardwaremap.bottomClaw, gamepad1.x, gamepad1.y, buttonArray[3]);
 
             if (gamepad1.a && ButtonA){
                 if(hardwaremap.bottomWrist.getPosition() > 0.5){
@@ -100,10 +107,10 @@ public class FirstPedroTeleop extends LinearOpMode {
             }
 
             if (gamepad1.x && ButtonX){
-                if(hardwaremap.liftWrist.getPosition() > 0.9){
-                    hardwaremap.liftWrist.setPosition(0.8);
+                if(hardwaremap.liftWrist.getPosition() > 0.75){
+                    hardwaremap.liftWrist.setPosition(0.7);
                 } else {
-                    hardwaremap.liftWrist.setPosition(1);
+                    hardwaremap.liftWrist.setPosition(0.8);
                 }
                 ButtonX = false;
             } else if(!gamepad1.x && !ButtonX){
@@ -129,41 +136,41 @@ public class FirstPedroTeleop extends LinearOpMode {
 //            else if (gamepad1.left_bumper){
 //                extendPos -= 5;
 //            }
-            extendPos = (int) gamepad1.right_trigger * 2000;
+            extendPos = (int) gamepad1.right_trigger * 500;
             hardwaremap.extend.setPower(1);
             hardwaremap.extend.setTargetPosition(extendPos);
 
 
-            if (gamepad1.left_trigger < 0.5 && buttonArray[10]){
-                liftStage++;
-                if (liftStage > 2){
-                    liftStage = 0;
-                }
-                buttonArray[10] = false;
-            } else if (gamepad1.left_trigger > 0.5 && !buttonArray[10]){
-                buttonArray[10] = true;
-            }
-            switch (liftStage){
-                case 0:
-                    liftPos = 25;
-                    break;
-                case 1:
-                    liftPos = 2000;
-                    break;
-                case 2:
-                    liftPos = 3000;
-                    break;
-            }
-            //max lift height: 5350
-            hardwaremap.liftL.setPower(1);
-            hardwaremap.liftR.setPower(1);
-            hardwaremap.liftL.setTargetPosition(liftPos);
-            hardwaremap.liftR.setTargetPosition(liftPos);
+//            if (gamepad1.left_trigger < 0.5 && buttonArray[10]){
+//                liftStage++;
+//                if (liftStage > 2){
+//                    liftStage = 0;
+//                }
+//                buttonArray[10] = false;
+//            } else if (gamepad1.left_trigger > 0.5 && !buttonArray[10]){
+//                buttonArray[10] = true;
+//            }
+//            switch (liftStage){
+//                case 0:
+//                    liftPos = 25;
+//                    break;
+//                case 1:
+//                    liftPos = 2000;
+//                    break;
+//                case 2:
+//                    liftPos = 3000;
+//                    break;
+//            }
+//            //max lift height: 5350
+//            hardwaremap.liftL.setPower(1);
+//            hardwaremap.liftR.setPower(1);
+//            hardwaremap.liftL.setTargetPosition(liftPos);
+//            hardwaremap.liftR.setTargetPosition(liftPos);
 
 
             if (gamepad1.right_bumper && buttonArray[11]){
                 armStage++;
-                if (armStage > 3){
+                if (armStage > 2){
                     armStage = 0;
                 }
                 buttonArray[11] = false;
@@ -178,10 +185,7 @@ public class FirstPedroTeleop extends LinearOpMode {
                     armPos = 150;
                     break;
                 case 2:
-                    armPos = 600;
-                    break;
-                case 3:
-                    armPos = 100;
+                    armPos = 300;
                     break;
             }
             hardwaremap.arm.setPower(1);
