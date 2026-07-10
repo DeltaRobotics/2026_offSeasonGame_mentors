@@ -7,6 +7,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -23,6 +24,7 @@ public class FirstPedroTeleop extends LinearOpMode {
     int armStage = 0;
     int armPos = 0;
     double extensionReleasePos = 0.5;
+    double extensionPos;
 
     boolean ButtonA = true;
     boolean ButtonB = true;
@@ -51,6 +53,30 @@ public class FirstPedroTeleop extends LinearOpMode {
         hardwaremap.arm.setTargetPosition(50);
         hardwaremap.arm.setPower(1);
 
+        hardwaremap.extend.setTargetPosition(0);
+        hardwaremap.extend.setPower(1);
+
+        boolean resetExtension = true;
+        hardwaremap.extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extensionPos = 0.0;//starting pos
+        hardwaremap.extend.setPower(-0.25);
+        sleep(100);
+
+        //pull back lightly until we stop seeing encoder changes then stop
+        while(resetExtension){
+            sleep(100);
+            if(extensionPos < hardwaremap.extend.getCurrentPosition() + 25 && extensionPos > hardwaremap.extend.getCurrentPosition() - 25) { // didn't move much
+                hardwaremap.extend.setPower(0.25);
+                sleep(750);
+                hardwaremap.extend.setPower(0);
+                hardwaremap.extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                resetExtension = false;
+            } else {
+                extensionPos = hardwaremap.extend.getCurrentPosition();
+            }
+        }
+
+        hardwaremap.extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardwaremap.extend.setTargetPosition(0);
         hardwaremap.extend.setPower(1);
 
@@ -193,8 +219,6 @@ public class FirstPedroTeleop extends LinearOpMode {
             telemetry.addData("Heading: ", follower.poseTracker.getPose().getHeading());
 
             telemetry.addData("Left pod value: ", follower.poseTracker);
-
-
              */
 
             telemetry.addData("Lift theory pos", liftPos);
@@ -209,6 +233,14 @@ public class FirstPedroTeleop extends LinearOpMode {
             telemetry.addData("Extend claw pos", hardwaremap.bottomClaw.getPosition());
             telemetry.addData("Lift wrist pos", hardwaremap.liftWrist.getPosition());
             telemetry.addData("Lift claw pos", hardwaremap.liftClaw.getPosition());
+
+            telemetry.addData("\nX pos", follower.getPose().getX());
+            telemetry.addData("Y pos", follower.getPose().getY());
+            telemetry.addData("Heading", follower.getPose().getHeading());
+
+            telemetry.addData("\nLF pos", hardwareMap.dcMotor.get("motorLF").getCurrentPosition());
+            telemetry.addData("RB pos", hardwareMap.dcMotor.get("motorRB").getCurrentPosition());
+            telemetry.addData("RF pos", hardwareMap.dcMotor.get("motorRF").getCurrentPosition());
 
 
             telemetry.update();
