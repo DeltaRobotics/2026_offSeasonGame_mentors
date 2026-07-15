@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 //@Config //We need this for Dashboard to change variables
-public class OutreachHardwaremap {
+public class BasicHardwaremap {
 
     //FtcDashboard dashboard = FtcDashboard.getInstance();
     //drive motors
@@ -17,13 +16,10 @@ public class OutreachHardwaremap {
     public DcMotor motorLF = null;
     public DcMotor motorRB = null;
     public DcMotor motorLB = null;
-    public Servo arm = null;
-    public Servo wrist = null;
-    public Servo claw = null;
 
 
 
-    public OutreachHardwaremap(HardwareMap ahwMap, Telemetry telemetry) {
+    public BasicHardwaremap(HardwareMap ahwMap, Telemetry telemetry) {
 
         //drive motors
         motorRF = ahwMap.dcMotor.get("motorRF");
@@ -50,9 +46,6 @@ public class OutreachHardwaremap {
         motorRB.setPower(0);
         motorLB.setPower(0);
 
-        arm = ahwMap.servo.get("arm");
-        wrist = ahwMap.servo.get("wrist");
-        claw = ahwMap.servo.get("claw");
 
     }
 
