@@ -20,17 +20,18 @@ public class FirstPedroTeleop extends LinearOpMode {
     boolean[] buttonArray = new boolean[20];
     int extendPos = 0;
     int liftPos = 0;
-    int liftStage = 0;
+    int liftStage = 2;
     int armStage = 0;
     int armPos = 0;
     double extensionReleasePos = 0.5;
     double extensionPos;
 
+    boolean ExtendingOut = false;
+    boolean Placing = false;
     boolean ButtonA = true;
-    boolean ButtonB = true;
     boolean ButtonX = true;
+    boolean ButtonDU = true;
     boolean ButtonY = true;
-    boolean ButtonRB = true;
     boolean ButtonLB = true;
 
     @Override
@@ -45,22 +46,28 @@ public class FirstPedroTeleop extends LinearOpMode {
 
         FirstHardwaremap hardwaremap = new FirstHardwaremap(hardwareMap, telemetry);
 
-        hardwaremap.bottomWrist.setPosition(0.4);
-        hardwaremap.bottomClaw.setPosition(0.5);
+        hardwaremap.arm.setTargetPosition(100);
+        hardwaremap.arm.setPower(1);
+
+        sleep(500);
+
         hardwaremap.liftClaw.setPosition(0.7);
         hardwaremap.liftWrist.setPosition(0.8);
 
-        hardwaremap.arm.setTargetPosition(50);
-        hardwaremap.arm.setPower(1);
+        sleep(1000);
 
+        hardwaremap.bottomWrist.setPosition(0.4);
+        hardwaremap.bottomClaw.setPosition(0.5);
         hardwaremap.extend.setTargetPosition(0);
         hardwaremap.extend.setPower(1);
 
+        /*
         boolean resetExtension = true;
         hardwaremap.extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         extensionPos = 0.0;//starting pos
         hardwaremap.extend.setPower(-0.25);
         sleep(100);
+
 
         //pull back lightly until we stop seeing encoder changes then stop
         while(resetExtension){
@@ -79,6 +86,8 @@ public class FirstPedroTeleop extends LinearOpMode {
         hardwaremap.extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardwaremap.extend.setTargetPosition(0);
         hardwaremap.extend.setPower(1);
+        */
+
 
         waitForStart();
 
@@ -88,138 +97,119 @@ public class FirstPedroTeleop extends LinearOpMode {
             follower.setTeleOpDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, true);
             follower.update();
 
+            //bottom extender
+            extendPos = (int) gamepad1.right_trigger * 2000;
+            hardwaremap.extend.setPower(1);
+            hardwaremap.extend.setTargetPosition(extendPos);
 
-            //wrist WIP intake: 0.8   output: 1
-            //buttonArray[0] = hardwaremap.servoFineAdjust(hardwaremap.liftWrist, gamepad1.dpad_up, gamepad1.dpad_down, buttonArray[0]);
-            //claw open pos: 0.6      close: 0.8
-            //buttonArray[1] = hardwaremap.servoFineAdjust(hardwaremap.liftClaw, gamepad1.dpad_left, gamepad1.dpad_right, buttonArray[1]);
-
-
-
-
-            //bottom: 0.4         top: 0.9
-            //buttonArray[2] = hardwaremap.servoFineAdjust(hardwaremap.bottomWrist, gamepad1.a, gamepad1.b, buttonArray[2]);
-
-            //open pos: 0.3     close pos: 0.6
-            //buttonArray[3] = hardwaremap.servoFineAdjust(hardwaremap.bottomClaw, gamepad1.x, gamepad1.y, buttonArray[3]);
-
-            if (gamepad1.a && ButtonA){
-                if(hardwaremap.bottomWrist.getPosition() > 0.5){
-                    hardwaremap.bottomWrist.setPosition(0.4);
-                } else {
-                    hardwaremap.bottomWrist.setPosition(0.9);
+            //auto open claw on extend
+            if(gamepad1.right_trigger > 0.05){
+                //moving out
+                ExtendingOut = true;
+                hardwaremap.bottomClaw.setPosition(0.3);
+            } else {
+                // coming back
+                if(ExtendingOut){
+                    hardwaremap.bottomClaw.setPosition(0.6);
+                    ExtendingOut = false;
                 }
-                ButtonA = false;
-            } else if(!gamepad1.a && !ButtonA){
-                ButtonA = true;
             }
 
-            if (gamepad1.b && ButtonB){
+            //Extension claw release for ground junctions
+            if (gamepad1.x && ButtonX){
                 if(hardwaremap.bottomClaw.getPosition() > 0.4){
                     hardwaremap.bottomClaw.setPosition(0.3);
                 } else {
                     hardwaremap.bottomClaw.setPosition(0.6);
-                }
-                ButtonB = false;
-            } else if(!gamepad1.b && !ButtonB){
-                ButtonB = true;
-            }
-
-            if (gamepad1.x && ButtonX){
-                if(hardwaremap.liftWrist.getPosition() > 0.9){
-                    hardwaremap.liftWrist.setPosition(0.8);
-                } else {
-                    hardwaremap.liftWrist.setPosition(1);
                 }
                 ButtonX = false;
             } else if(!gamepad1.x && !ButtonX){
                 ButtonX = true;
             }
 
-            if (gamepad1.y && ButtonY){
-                if(hardwaremap.liftClaw.getPosition() > 0.7){
-                    hardwaremap.liftClaw.setPosition(0.6);
+            //bottom wrist movement
+            if (gamepad1.dpad_up && ButtonDU){
+                if(hardwaremap.bottomWrist.getPosition() > 0.5){
+                    hardwaremap.bottomWrist.setPosition(0.4);
                 } else {
-                    hardwaremap.liftClaw.setPosition(0.8);
+                    hardwaremap.bottomWrist.setPosition(0.9);
                 }
-                ButtonY = false;
-            } else if(!gamepad1.y && !ButtonY){
-                ButtonY = true;
+                ButtonDU = false;
+            } else if(!gamepad1.dpad_up && !ButtonDU){
+                ButtonDU = true;
             }
 
-
-            //full extension 2300
-//            if (gamepad1.right_bumper){
-//                extendPos += 5;
-//            }
-//            else if (gamepad1.left_bumper){
-//                extendPos -= 5;
-//            }
-            extendPos = (int) gamepad1.right_trigger * 2000;
-            hardwaremap.extend.setPower(1);
-            hardwaremap.extend.setTargetPosition(extendPos);
-
-
-            if (gamepad1.left_trigger < 0.5 && buttonArray[10]){
-                liftStage++;
-                if (liftStage > 2){
-                    liftStage = 0;
-                }
-                buttonArray[10] = false;
-            } else if (gamepad1.left_trigger > 0.5 && !buttonArray[10]){
-                buttonArray[10] = true;
-            }
-            switch (liftStage){
-                case 0:
+            //load arm and place driver assist
+            if (gamepad1.left_bumper && ButtonLB){
+                if(Placing){
+                    //move back to the transfer
+                    hardwaremap.liftClaw.setPosition(0.7);
+                    hardwaremap.liftWrist.setPosition(0.8);
                     liftPos = 25;
-                    break;
-                case 1:
-                    liftPos = 2000;
-                    break;
-                case 2:
-                    liftPos = 3000;
-                    break;
+                    armPos = 100;
+                    Placing = false;
+                } else {
+                    //move to the placing position
+                    liftStage = 2;
+                    hardwaremap.liftClaw.setPosition(0.9);
+                    hardwaremap.bottomClaw.setPosition(0.3);
+                    hardwaremap.liftWrist.setPosition(1);
+                    Placing = true;
+                }
+                ButtonLB = false;
+            } else if(!gamepad1.left_bumper && !ButtonLB){
+                ButtonLB = true;
             }
-            //max lift height: 5350
+
+            //lift and arm positions
+            if(Placing){
+                //move down
+                if (gamepad1.a && ButtonA){
+                    liftStage -= 1;
+                    ButtonA = false;
+                } else if(!gamepad1.a && !ButtonA){
+                    ButtonA = true;
+                }
+
+                //move up
+                if (gamepad1.y && ButtonY){
+                    liftStage += 1;
+                    ButtonY = false;
+                } else if(!gamepad1.y && !ButtonY){
+                    ButtonY = true;
+                }
+
+                if(liftStage > 3){
+                    liftStage = 1;
+                }
+                if(liftStage < 1){
+                    liftStage = 3;
+                }
+
+                switch(liftStage){
+                    case 1:
+                        liftPos = 25;
+                        armPos = 650;
+                        break;
+                    case 2:
+                        liftPos = 25;
+                        armPos = 600;
+                        break;
+                    case 3:
+                        liftPos = 1000;
+                        armPos = 500;
+                        break;
+                }
+
+            }
+
+            hardwaremap.arm.setPower(1);
+            hardwaremap.arm.setTargetPosition(armPos);
+
             hardwaremap.liftL.setPower(1);
             hardwaremap.liftR.setPower(1);
             hardwaremap.liftL.setTargetPosition(liftPos);
             hardwaremap.liftR.setTargetPosition(liftPos);
-
-
-            if (gamepad1.right_bumper && buttonArray[11]){
-                armStage++;
-                if (armStage > 3){
-                    armStage = 0;
-                }
-                buttonArray[11] = false;
-            } else if (!gamepad1.right_bumper && !buttonArray[11]){
-                buttonArray[11] = true;
-            }
-            switch (armStage){
-                case 0:
-                    armPos = 25;
-                    break;
-                case 1:
-                    armPos = 150;
-                    break;
-                case 2:
-                    armPos = 600;
-                    break;
-                case 3:
-                    armPos = 100;
-                    break;
-            }
-            hardwaremap.arm.setPower(1);
-            hardwaremap.arm.setTargetPosition(armPos);
-
-            /*
-            telemetry.addData("X pos: ", follower.poseTracker.getPose().getX());
-            telemetry.addData("Y pos: ", follower.poseTracker.getPose().getY());
-            telemetry.addData("Heading: ", follower.poseTracker.getPose().getHeading());
-
-            telemetry.addData("Left pod value: ", follower.poseTracker);
-             */
 
             telemetry.addData("Lift theory pos", liftPos);
             telemetry.addData("Lift pos", hardwaremap.liftL.getCurrentPosition());
