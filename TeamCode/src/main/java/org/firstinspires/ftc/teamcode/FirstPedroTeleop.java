@@ -32,7 +32,7 @@ public class FirstPedroTeleop extends LinearOpMode {
     boolean ButtonDU = true;
     boolean ButtonY = true;
     boolean ButtonLB = true;
-    boolean transferring = false;
+    int transferring = 0;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -51,7 +51,7 @@ public class FirstPedroTeleop extends LinearOpMode {
 
         sleep(500);
 
-        hardwaremap.liftClaw.setPosition(0.7);
+        hardwaremap.liftClaw.setPosition(0.5);
         hardwaremap.liftWrist.setPosition(0.8);
 
         sleep(1000);
@@ -67,17 +67,17 @@ public class FirstPedroTeleop extends LinearOpMode {
         hardwaremap.arm.setTargetPosition(0);
         hardwaremap.arm.setPower(0);
 
-        sleep(1000);
+        sleep(500);
 
         hardwaremap.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         sleep(500);
 
         hardwaremap.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardwaremap.arm.setTargetPosition(300);
+        hardwaremap.arm.setTargetPosition(490);
         hardwaremap.arm.setPower(1);
 
-        sleep(1000);
+        sleep(2000);
 
         boolean resetExtension = true;
         hardwaremap.extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -120,7 +120,7 @@ public class FirstPedroTeleop extends LinearOpMode {
             }
             else if (gamepad1.right_trigger < lastExtendPos){
                 hardwaremap.bottomClaw.setPosition(0.65);
-                closingCycles = 10;
+                closingCycles = 15;
             }
 
             if (closingCycles > 0){
@@ -178,32 +178,56 @@ public class FirstPedroTeleop extends LinearOpMode {
                 ButtonDU = true;
             }
 
+            if (transferring > 0){
+
+                switch (transferring){
+                    case 35:
+                        hardwaremap.bottomClaw.setPosition(0.3);
+                        break;
+                    case 30:
+                        hardwaremap.liftWrist.setPosition(0.2);//dodge other claw
+                        break;
+                    case 25:
+                        armPos = 490;
+                        break;
+                    case 1:
+                        hardwaremap.liftWrist.setPosition(1);
+                        break;
+
+                }
+                transferring--;
+            }
+
+
+
+
             //load arm and place driver assist
             if (gamepad1.left_bumper && ButtonLB){
                 if(Placing == 2){
                     //move to wait
-                    hardwaremap.liftClaw.setPosition(0.7);
-                    hardwaremap.liftWrist.setPosition(0.8);
+                    hardwaremap.liftClaw.setPosition(0.7);//open
+                    hardwaremap.liftWrist.setPosition(0.3);//intake
                     liftPos = 25;
                     armPos = 200;
                     Placing = 0;
                 } else if (Placing == 1){
                     //move to the placing position
 
+                    //TODO find new set positions for lift claw
                     hardwaremap.liftClaw.setPosition(0.9);
-                    hardwaremap.bottomClaw.setPosition(0.3);
-                    //TODO fix all things and use the boolean to make work out side of this if
 
-                    hardwaremap.liftWrist.setPosition(1);
+                    transferring = 40;
+
+
                     liftStage = 2;
                     Placing = 2;
                 }
                 else {
-                    //move back to the transfer
-                    hardwaremap.liftClaw.setPosition(0.7);
-                    hardwaremap.liftWrist.setPosition(0.8);
+                    //move to be ready to transfer
+                    hardwaremap.liftClaw.setPosition(0.7);//open
+                    hardwaremap.liftWrist.setPosition(0.3);//intake
                     liftPos = 25;
-                    armPos = 100;
+                    armPos = 125;
                     Placing = 1;
                 }
                 ButtonLB = false;
@@ -211,6 +235,7 @@ public class FirstPedroTeleop extends LinearOpMode {
                 ButtonLB = true;
             }
 
+            /*
             //lift and arm positions
             if(Placing == 1){
                 //move down
@@ -252,6 +277,8 @@ public class FirstPedroTeleop extends LinearOpMode {
                 }
 
             }
+
+             */
 
             hardwaremap.arm.setPower(1);
             hardwaremap.arm.setTargetPosition(armPos);
