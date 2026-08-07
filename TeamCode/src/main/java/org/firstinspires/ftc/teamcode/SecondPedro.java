@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@TeleOp(name="FirstPedroTeleop")
+@TeleOp(name="SecondPedro")
 //@Disabled
-public class FirstPedroTeleop extends LinearOpMode {
+public class SecondPedro extends LinearOpMode {
 
     public static Follower follower;
 
@@ -47,8 +47,8 @@ public class FirstPedroTeleop extends LinearOpMode {
 
         FirstHardwaremap hardwaremap = new FirstHardwaremap(hardwareMap, telemetry);
 
-        hardwaremap.arm.setTargetPosition(300);
-        hardwaremap.arm.setPower(1);
+        //hardwaremap.arm.setTargetPosition(300);
+        //hardwaremap.arm.setPower(1);
 
         sleep(500);
 
@@ -60,6 +60,7 @@ public class FirstPedroTeleop extends LinearOpMode {
         hardwaremap.bottomWrist.setPosition(0.36);
         hardwaremap.bottomClaw.setPosition(0.5);
 
+        /*
         hardwaremap.arm.setTargetPosition(50);
         hardwaremap.arm.setPower(.5);
 
@@ -79,6 +80,8 @@ public class FirstPedroTeleop extends LinearOpMode {
         hardwaremap.arm.setPower(1);
 
         sleep(2000);
+
+         */
 
         boolean resetExtension = true;
         hardwaremap.extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -287,8 +290,8 @@ public class FirstPedroTeleop extends LinearOpMode {
 
 
 
-            hardwaremap.arm.setPower(1);
-            hardwaremap.arm.setTargetPosition(armPos);
+            //hardwaremap.arm.setPower(1);
+            //hardwaremap.arm.setTargetPosition(armPos);
 
             hardwaremap.liftL.setPower(1);
             hardwaremap.liftR.setPower(1);
