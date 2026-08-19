@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @TeleOp(name="ChildSafeTeleop")
-@Disabled
+//@Disabled
 public class ChildSafeTeleop extends LinearOpMode {
 
     public static Follower follower;
@@ -30,6 +30,7 @@ public class ChildSafeTeleop extends LinearOpMode {
     boolean ButtonY = true;
     boolean ButtonRB = true;
     boolean ButtonLB = true;
+    boolean ButtonLT = true;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -43,7 +44,7 @@ public class ChildSafeTeleop extends LinearOpMode {
 
         FirstHardwaremap hardwaremap = new FirstHardwaremap(hardwareMap, telemetry);
 
-        hardwaremap.bottomWrist.setPosition(0.4);
+        hardwaremap.bottomWrist.setPosition(0.3);
         hardwaremap.bottomClaw.setPosition(0.5);
         hardwaremap.liftClaw.setPosition(0.7);
         hardwaremap.liftWrist.setPosition(0.7);
@@ -82,12 +83,13 @@ public class ChildSafeTeleop extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested())
         {
             follower.setTeleOpDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, true);
+            follower.setMaxPower(0.5);
             follower.update();
 
 
             if (gamepad1.a && ButtonA){
                 if(hardwaremap.bottomWrist.getPosition() > 0.5){
-                    hardwaremap.bottomWrist.setPosition(0.4);
+                    hardwaremap.bottomWrist.setPosition(0.3);
                 } else {
                     hardwaremap.bottomWrist.setPosition(0.9);
                 }
@@ -98,7 +100,7 @@ public class ChildSafeTeleop extends LinearOpMode {
 
             if (gamepad1.b && ButtonB){
                 if(hardwaremap.bottomClaw.getPosition() > 0.4){
-                    hardwaremap.bottomClaw.setPosition(0.3);
+                    hardwaremap.bottomClaw.setPosition(0.2);
                 } else {
                     hardwaremap.bottomClaw.setPosition(0.6);
                 }
@@ -107,26 +109,26 @@ public class ChildSafeTeleop extends LinearOpMode {
                 ButtonB = true;
             }
 
-            if (gamepad1.x && ButtonX){
+            if ((gamepad1.left_trigger > 0.5) && ButtonLT){
                 if(hardwaremap.liftWrist.getPosition() > 0.75){
                     hardwaremap.liftWrist.setPosition(0.7);
                 } else {
                     hardwaremap.liftWrist.setPosition(0.8);
                 }
-                ButtonX = false;
-            } else if(!gamepad1.x && !ButtonX){
-                ButtonX = true;
+                ButtonLT = false;
+            } else if((gamepad1.left_trigger < 0.5) && !ButtonLT){
+                ButtonLT = true;
             }
 
-            if (gamepad1.y && ButtonY){
-                if(hardwaremap.liftClaw.getPosition() > 0.7){
-                    hardwaremap.liftClaw.setPosition(0.6);
+            if (gamepad1.left_bumper && ButtonLB){
+                if(hardwaremap.liftClaw.getPosition() > 0.6){
+                    hardwaremap.liftClaw.setPosition(0.4);
                 } else {
-                    hardwaremap.liftClaw.setPosition(0.8);
+                    hardwaremap.liftClaw.setPosition(0.7);
                 }
-                ButtonY = false;
-            } else if(!gamepad1.y && !ButtonY){
-                ButtonY = true;
+                ButtonLB = false;
+            } else if(!gamepad1.left_bumper && !ButtonLB){
+                ButtonLB = true;
             }
 
 
@@ -138,7 +140,7 @@ public class ChildSafeTeleop extends LinearOpMode {
 //                extendPos -= 5;
 //            }
             extendPos = (int) gamepad1.right_trigger * 500;
-            hardwaremap.extend.setPower(1);
+            hardwaremap.extend.setPower(0.5);
             hardwaremap.extend.setTargetPosition(extendPos);
 
 
@@ -169,14 +171,23 @@ public class ChildSafeTeleop extends LinearOpMode {
 //            hardwaremap.liftR.setTargetPosition(liftPos);
 
 
-            if (gamepad1.right_bumper && buttonArray[11]){
+            if (gamepad1.dpad_up && buttonArray[11]){
                 armStage++;
                 if (armStage > 2){
                     armStage = 0;
                 }
                 buttonArray[11] = false;
-            } else if (!gamepad1.right_bumper && !buttonArray[11]){
+            } else if (!gamepad1.dpad_up && !buttonArray[11]){
                 buttonArray[11] = true;
+            }
+            if (gamepad1.dpad_down && buttonArray[12]){
+                armStage--;
+                if (armStage < 0){
+                    armStage = 2;
+                }
+                buttonArray[12] = false;
+            } else if (!gamepad1.dpad_down && !buttonArray[12]){
+                buttonArray[12] = true;
             }
             switch (armStage){
                 case 0:

@@ -16,6 +16,7 @@ public class BasicHardwaremap {
     public DcMotor motorLF = null;
     public DcMotor motorRB = null;
     public DcMotor motorLB = null;
+    public DcMotor extend = null;
 
 
 
@@ -46,6 +47,12 @@ public class BasicHardwaremap {
         motorRB.setPower(0);
         motorLB.setPower(0);
 
+        extend = ahwMap.dcMotor.get("extend");
+        extend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extend.setTargetPosition(0);
+        extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extend.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
