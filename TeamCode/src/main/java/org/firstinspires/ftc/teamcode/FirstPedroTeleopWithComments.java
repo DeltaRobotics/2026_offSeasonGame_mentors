@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @TeleOp(name="FirstPedroTeleopWithComments")
-//@Disabled
+@Disabled
 public class FirstPedroTeleopWithComments extends LinearOpMode {
 
     public static Follower follower;

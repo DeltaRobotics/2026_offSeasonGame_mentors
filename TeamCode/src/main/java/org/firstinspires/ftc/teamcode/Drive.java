@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 @TeleOp(name="Drive")
-//@Disabled
+@Disabled
 
 public class Drive extends LinearOpMode
 {

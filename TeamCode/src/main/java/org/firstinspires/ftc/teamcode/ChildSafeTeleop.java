@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @TeleOp(name="ChildSafeTeleop")
-//@Disabled
+@Disabled
 public class ChildSafeTeleop extends LinearOpMode {
 
     public static Follower follower;
