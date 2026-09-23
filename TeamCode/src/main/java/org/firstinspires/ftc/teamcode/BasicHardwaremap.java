@@ -18,9 +18,11 @@ public class BasicHardwaremap {
     public DcMotor motorLB = null;
     public DcMotor extend = null;
 
-
+    private Telemetry telemetry;
 
     public BasicHardwaremap(HardwareMap ahwMap, Telemetry telemetry) {
+
+        this.telemetry = telemetry;
 
         //drive motors
         motorRF = ahwMap.dcMotor.get("motorRF");

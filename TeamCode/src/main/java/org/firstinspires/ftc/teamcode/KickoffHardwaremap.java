@@ -24,7 +24,7 @@ public class KickoffHardwaremap {
     public DcMotor launchL = null;
     public DcMotor launchR = null;
 
-
+    private Telemetry telemetry;
 
     public static double F = .175; // = 32767 / maxV      (do not edit from this number)
     public static double P = 0.025; // = 0.1 * F           (raise till real's apex touches Var apex)
@@ -45,6 +45,7 @@ public class KickoffHardwaremap {
 
     public KickoffHardwaremap(HardwareMap ahwMap, Telemetry telemetry) {
 
+        this.telemetry = telemetry;
 
         //drive motors
         motorRF = ahwMap.dcMotor.get("motorRF");

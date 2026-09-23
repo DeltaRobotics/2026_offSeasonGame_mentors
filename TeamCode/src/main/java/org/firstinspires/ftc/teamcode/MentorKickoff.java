@@ -12,8 +12,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class MentorKickoff extends LinearOpMode
 {
-
-
     int launchPos = 0;
     int launchValue = 100;
 
@@ -60,8 +58,7 @@ public class MentorKickoff extends LinearOpMode
             }
 
             telemetry.addData("launch power", hardware.launchR.getPower());
-
+            telemetry.update();
         }
-
     }
 }
